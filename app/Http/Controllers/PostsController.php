@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Posts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 // use App\Http\Requests\StorePostsRequest;
@@ -51,9 +52,9 @@ class PostsController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Posts $post)
+    public function update(Request $request, Posts $posts)
     {
-        Gate::authorize('modify', $post);
+        Gate::authorize('modify', $posts);
         $fields = $request->validate([
             'title' => 'required',
             'body' => 'required',
@@ -69,7 +70,7 @@ class PostsController extends Controller implements HasMiddleware
      */
     public function destroy(Posts $posts)
     {
-       Gate::authorize('modify', $post);
+       Gate::authorize('modify', $posts);
        $posts->delete();
        return [
         'message' => 'Post deleted'
