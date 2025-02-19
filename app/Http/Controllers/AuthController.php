@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
-       $fields = $request->validate([
-           'name' => 'required|string|max:255',
-           'email' => 'required|email|unique:users,email',
-           'password' => 'required|confirmed'
-       ]);
+    public function register(RegisterRequest $request){
+       $fields = $request->validated();
 
        $user = User::create($fields);
        $token = $user->createToken($request->name);
@@ -24,11 +22,7 @@ class AuthController extends Controller
        ];
     }
 
-    public function login(Request $request){
-        $request->validate([
-            'email' => 'required|email|exists:users',
-            'password' => 'required'
-        ]);
+    public function login(LoginRequest $request){
 
         $user = User::where('email', $request->email)->first();
 
