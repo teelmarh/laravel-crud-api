@@ -5,19 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Posts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Routing\Controllers\HasMiddleware;
-// use App\Http\Requests\StorePostsRequest;
-// use App\Http\Requests\UpdatePostsRequest;
+use App\Http\Requests\StorePostsRequest;
+use App\Http\Requests\UpdatePostsRequest;
 
-class PostsController extends Controller implements HasMiddleware
+class PostsController extends Controller 
 {
-    public static function middleware(){
-        return[
-            new Middleware('auth:sanctum', except: ['index', 'show'] )
-        ];
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -29,14 +21,9 @@ class PostsController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePostsRequest $request)
     {
-        $fields = $request->validate([
-            'title' => 'required',
-            'body' => 'required',
-        ]);
-       
-        
+        $fields = $request->validated();
         $post = $request->user()->posts()->create($fields);
         return $post;
     }
@@ -44,23 +31,21 @@ class PostsController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Posts $post)
+    public function show($id)
     {
+        $post = Posts::findOrFail($id);
         return $post;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Posts $posts)
+    public function update(UpdatePostsRequest $request, $id)
     {
+        $post = Posts::findOrFail($id);
         Gate::authorize('modify', $posts);
-        $fields = $request->validate([
-            'title' => 'required',
-            'body' => 'required',
-        ]);
+        $fields = $request->validated();
        
-        
         $post -> update($fields);
         return $post;
     }
@@ -68,8 +53,9 @@ class PostsController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Posts $posts)
+    public function destroy($id)
     {
+        $posts = Posts::findOrFail($id);
        Gate::authorize('modify', $posts);
        $posts->delete();
        return [
