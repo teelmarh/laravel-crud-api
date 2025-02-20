@@ -43,7 +43,7 @@ class PostsController extends Controller
     public function update(UpdatePostsRequest $request, $id)
     {
         $post = Posts::findOrFail($id);
-        Gate::authorize('modify', $posts);
+        Gate::authorize('modify', $post);
         $fields = $request->validated();
        
         $post -> update($fields);
