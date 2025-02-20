@@ -13,7 +13,7 @@ class UpdatePostsRequest extends FormRequest
     // TEE THERE IS AN ISSUE HERE
     public function authorize(): bool
     {
-        return auth()->check();
+        return true;
     }
 
     /**
