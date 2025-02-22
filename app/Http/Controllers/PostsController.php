@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Posts;
 use App\Mail\PostPublished;
 use Illuminate\Http\Request;
+use App\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
@@ -29,7 +30,8 @@ class PostsController extends Controller
         $fields = $request->validated();
         $post = $request->user()->posts()->create($fields);
 
-        Mail::to(Auth::user())->send(new PostPublished(Auth::user(), $post)); 
+        // Mail::to(Auth::user())->send(new PostPublished(Auth::user(), $post)); 
+        Auth::user()->notify(new VerifyEmail(Auth::user(), $post)); 
         return $post;
     }
 
