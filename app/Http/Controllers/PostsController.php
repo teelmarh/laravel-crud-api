@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Posts;
+use App\Mail\PostPublished;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StorePostsRequest;
 use App\Http\Requests\UpdatePostsRequest;
 
@@ -25,6 +28,8 @@ class PostsController extends Controller
     {
         $fields = $request->validated();
         $post = $request->user()->posts()->create($fields);
+
+        Mail::to(Auth::user())->send(new PostPublished(Auth::user(), $post)); 
         return $post;
     }
 
